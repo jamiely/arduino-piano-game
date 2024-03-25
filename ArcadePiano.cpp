@@ -13,15 +13,20 @@ ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t
     pinMode(keyPins[i],INPUT_PULLUP);
   }
 
-  for(int i=0;i<3;i++) {
-    EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0])),highScores[i]);
-    EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0]))+sizeof(highScores[0]),initials[i]);
-  }
+  pinMode(LED_PIN, OUTPUT);
+
+  digitalWrite(LED_PIN, HIGH);
+
+  // for(int i=0;i<3;i++) {
+  //   EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0])),highScores[i]);
+  //   EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0]))+sizeof(highScores[0]),initials[i]);
+  // }
 }
 
 
 void ArcadePiano::begin()
 {
+  Serial.println("begin");
   scoreTimer.begin(0x70); 
   scoreTimer.setBrightness(0);
 
@@ -35,9 +40,9 @@ void ArcadePiano::begin()
 void ArcadePiano::startGame()
 {
   unsigned int score=0;
-  byte keyQueue[8];
+  byte keyQueue[KEY_QUEUE_SIZE];
   byte keyQueueStartIndex = 0;
-  for(int i=0;i<8;i++) {
+  for(int i=0;i<KEY_QUEUE_SIZE;i++) {
     keyQueue[i]=(byte)random(4);
   }
   for(int i=3;i>0;i--){
@@ -57,7 +62,7 @@ void ArcadePiano::startGame()
       if(keyPresses==(1<<i)){
         if(keyQueue[keyQueueStartIndex]==(3-i)){
           keyQueue[keyQueueStartIndex]=(byte)random(4);
-          keyQueueStartIndex=(keyQueueStartIndex+1)%8;
+          keyQueueStartIndex=(keyQueueStartIndex+1)%KEY_QUEUE_SIZE;
           printKeys(keyQueue, keyQueueStartIndex);
           scoreTimer.print(++score);
           scoreTimer.writeDisplay();
@@ -156,6 +161,9 @@ byte ArcadePiano::getKeyPresses()
       keyPresses+=1<<i;
     }
   }
+  digitalWrite(LED_PIN, keyPresses > 0 ? LOW : HIGH);
+  Serial.println("key presses");
+  Serial.println(keyPresses, HEX);
   return keyPresses;
 }
 
@@ -163,9 +171,13 @@ byte ArcadePiano::getKeyPresses()
 void ArcadePiano::printKeys(byte * keyQueue,byte keyQueueStartIndex) 
 {
   mx.clear();
-  for(int i=0;i<8;i++){
-    for(int j=0;j<5;j++){
-      mx.setPoint(7-i,keyQueue[((keyQueueStartIndex+i))%8]*9+j,true);
+  // draw one complete row at a time
+  for(int dr=0; dr < KEY_QUEUE_SIZE; dr++){
+    int r = MATRIX_DISPLAY_ROWS - 1 - dr;
+
+    for(int dc=0; dc < KEY_DISPLAY_LENGTH; dc++){      
+      int c = keyQueue[((keyQueueStartIndex+i)) % KEY_QUEUE_SIZE] * (MATRIX_DISPLAY_COLS + 1) + dc;
+      mx.setPoint(r, c, true);
     }
   }
 }
@@ -173,6 +185,7 @@ void ArcadePiano::printKeys(byte * keyQueue,byte keyQueueStartIndex)
 
 void ArcadePiano::printHighScores() 
 {
+  return;
   const uint16_t maxCol = MAX_DEVICES*ROW_SIZE;
   const uint8_t	stripeWidth = 10;
   while(true){

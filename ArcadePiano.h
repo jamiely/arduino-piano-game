@@ -8,10 +8,10 @@
 
 // Define the number of devices we have in the chain and the hardware interface for the LED Matrix Display
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
-#define MAX_DEVICES	4
+#define MAX_DEVICES	1
 
 // LED Matrix Pin
-#define CS_PIN    17  // or SS
+#define CS_PIN    9  // or SS
 
 #define NUM_KEYS 4
 
@@ -19,6 +19,13 @@
 #define  DELAYTIME  100  // in milliseconds
 
 #define CHAR_SPACING  1 // pixels between characters
+
+#define LED_PIN 13
+
+#define KEY_QUEUE_SIZE 8
+#define KEY_DISPLAY_LENGTH 5
+#define MATRIX_DISPLAY_ROWS 8
+#define MATRIX_DISPLAY_COLS 8
 
 class ArcadePiano {
   private:
