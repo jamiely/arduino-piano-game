@@ -1,6 +1,26 @@
 // ArcadePiano.cpp
 #include "ArcadePiano.h"
+#include "pitches.h"
 
+int melody[] = {
+  NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4, NOTE_A4, NOTE_A4, NOTE_G4,
+  NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4, NOTE_D4, NOTE_C4,
+  NOTE_G4, NOTE_G4, NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4,
+  NOTE_G4, NOTE_G4, NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4,
+  NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4, NOTE_A4, NOTE_A4, NOTE_G4,
+  NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4, NOTE_D4, NOTE_C4
+};
+
+// Corresponding note durations (in milliseconds)
+int melodyDurations[] = {
+  500, 500, 500, 500, 500, 500, 1000,
+  500, 500, 500, 500, 500, 500, 1000,
+  500, 500, 500, 500, 500, 500, 1000,
+  500, 500, 500, 500, 500, 500, 1000,
+  500, 500, 500, 500, 500, 500, 1000,
+  500, 500, 500, 500, 500, 500, 1000
+};
+int melodyLength = sizeof(melody) / sizeof(melody[0]);
 
 ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t key4Pin) 
 : mx(HARDWARE_TYPE, CS_PIN, MAX_DEVICES)
@@ -34,6 +54,8 @@ void ArcadePiano::begin()
   mx.control(MD_MAX72XX::INTENSITY,0);
   
   randomSeed(analogRead(A3));
+
+  melodyPosition = 0;
 }
 
 
@@ -69,6 +91,12 @@ void ArcadePiano::startGame()
           delay(20);
           while(getKeyPresses()!=0);
           delay(20);
+
+          // did we get it right? play the note
+
+          tone(8, melody[melodyPosition], 250);
+          melodyPosition = (melodyPosition + 1) % melodyLength;
+
           break;
         }
         else{
@@ -176,7 +204,7 @@ void ArcadePiano::printKeys(byte * keyQueue,byte keyQueueStartIndex)
     int r = MATRIX_DISPLAY_ROWS - 1 - dr;
 
     for(int dc=0; dc < KEY_DISPLAY_LENGTH; dc++){      
-      int c = keyQueue[((keyQueueStartIndex+i)) % KEY_QUEUE_SIZE] * (MATRIX_DISPLAY_COLS + 1) + dc;
+      int c = keyQueue[((keyQueueStartIndex + dr)) % KEY_QUEUE_SIZE] * (MATRIX_DISPLAY_COLS + 1) + dc;
       mx.setPoint(r, c, true);
     }
   }

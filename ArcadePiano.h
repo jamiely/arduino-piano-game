@@ -23,12 +23,13 @@
 #define LED_PIN 13
 
 #define KEY_QUEUE_SIZE 8
-#define KEY_DISPLAY_LENGTH 5
+#define KEY_DISPLAY_LENGTH 2
 #define MATRIX_DISPLAY_ROWS 8
-#define MATRIX_DISPLAY_COLS 8
+#define MATRIX_DISPLAY_COLS 1
 
 class ArcadePiano {
   private:
+    uint8_t melodyPosition;
     MD_MAX72XX mx;
     Adafruit_7segment scoreTimer;
     uint8_t keyPins[4];
