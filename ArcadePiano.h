@@ -29,6 +29,9 @@
 
 class ArcadePiano {
   private:
+    uint8_t melodyIndex;
+    uint8_t melodyLength;
+    int* melody;
     uint8_t melodyPosition;
     MD_MAX72XX mx;
     Adafruit_7segment scoreTimer;
@@ -37,6 +40,7 @@ class ArcadePiano {
     char initials[3][4];
     void printKeys(byte * keyQueue,byte keyQueueStartIndex);
     void getInitials(char* buf);
+    void switchSong();
 
   public:
     ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t key4Pin);

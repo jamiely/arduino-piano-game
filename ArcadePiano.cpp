@@ -2,7 +2,23 @@
 #include "ArcadePiano.h"
 #include "pitches.h"
 
-int melody[] = {
+
+int odeToJoyMelody[] = {
+  NOTE_E4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_G4, NOTE_F4, NOTE_E4, NOTE_D4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_E4, NOTE_D4, NOTE_D4,
+  NOTE_E4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_G4, NOTE_F4, NOTE_E4, NOTE_D4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_D4, NOTE_C4,
+  NOTE_D4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_D4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_C4, NOTE_B4, NOTE_C4
+};
+
+int odeToJoyLength = 43;
+
+// Corresponding note durations (in milliseconds)
+int odeToJoyDurations[] = {
+  250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250, 500,
+  250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250,
+  250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250
+};
+
+int twinkleMelody[] = {
   NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4, NOTE_A4, NOTE_A4, NOTE_G4,
   NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4, NOTE_D4, NOTE_C4,
   NOTE_G4, NOTE_G4, NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4,
@@ -11,8 +27,10 @@ int melody[] = {
   NOTE_F4, NOTE_F4, NOTE_E4, NOTE_E4, NOTE_D4, NOTE_D4, NOTE_C4
 };
 
+int twinkleLength = 42;
+
 // Corresponding note durations (in milliseconds)
-int melodyDurations[] = {
+int twinkleDurations[] = {
   500, 500, 500, 500, 500, 500, 1000,
   500, 500, 500, 500, 500, 500, 1000,
   500, 500, 500, 500, 500, 500, 1000,
@@ -20,11 +38,46 @@ int melodyDurations[] = {
   500, 500, 500, 500, 500, 500, 1000,
   500, 500, 500, 500, 500, 500, 1000
 };
-int melodyLength = sizeof(melody) / sizeof(melody[0]);
+
+int joy_to_the_world_melody[] = {
+  NOTE_D4, NOTE_D4, NOTE_E4, NOTE_FS4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4, NOTE_CS4, NOTE_B3, NOTE_A3, NOTE_B3, NOTE_CS4, NOTE_D4,
+  NOTE_D4, NOTE_D4, NOTE_E4, NOTE_FS4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4, NOTE_CS4, NOTE_B3, NOTE_A3, NOTE_B3, NOTE_A3, NOTE_G3,
+  NOTE_FS3, NOTE_FS3, NOTE_G3, NOTE_A3, NOTE_A3, NOTE_G3, NOTE_FS3, NOTE_E3, NOTE_D3, NOTE_E3, NOTE_D3, NOTE_C3, NOTE_B2, NOTE_C3, NOTE_B2, NOTE_A2,
+  NOTE_G2, NOTE_G2, NOTE_A2, NOTE_B2, NOTE_A2, NOTE_G2, NOTE_FS2, NOTE_E2, NOTE_D2, NOTE_C2, NOTE_B1, NOTE_A1, NOTE_G1, NOTE_FS1, NOTE_E1, NOTE_D1
+};
+
+// Corresponding note durations (in milliseconds)
+// int joy_to_the_world_note_durations[] = {
+//   250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250, 500,
+//   250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250, 500
+// };
+
+int joy_to_the_world_melody_length = 64;
+
+int melodyCount = 3;
+
+void ArcadePiano::switchSong() {
+  switch(melodyIndex) {
+    case 0:
+      melody = odeToJoyMelody;
+      melodyLength = odeToJoyLength;
+      break;
+    case 1:
+      melody = twinkleMelody;
+      melodyLength = twinkleLength;
+      break;
+    case 2:
+      melody = joy_to_the_world_melody;
+      melodyLength = joy_to_the_world_melody_length;
+      break;
+  }
+  melodyIndex = (melodyIndex + 1) % melodyCount;
+}
 
 ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t key4Pin) 
 : mx(HARDWARE_TYPE, CS_PIN, MAX_DEVICES)
 {
+  melodyIndex = 2;
   keyPins[0]=key1Pin;
   keyPins[1]=key2Pin;
   keyPins[2]=key3Pin;
@@ -46,6 +99,8 @@ ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t
 
 void ArcadePiano::begin()
 {
+  switchSong();
+
   Serial.println("begin");
   scoreTimer.begin(0x70); 
   scoreTimer.setBrightness(0);
@@ -96,6 +151,9 @@ void ArcadePiano::startGame()
 
           tone(8, melody[melodyPosition], 250);
           melodyPosition = (melodyPosition + 1) % melodyLength;
+          if(melodyPosition == 0) {
+            switchSong();
+          }
 
           break;
         }
