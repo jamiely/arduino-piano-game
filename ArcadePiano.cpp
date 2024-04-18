@@ -90,10 +90,10 @@ ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t
 
   digitalWrite(LED_PIN, HIGH);
 
-  // for(int i=0;i<3;i++) {
-  //   EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0])),highScores[i]);
-  //   EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0]))+sizeof(highScores[0]),initials[i]);
-  // }
+  for(int i=0;i<3;i++) {
+    EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0])),highScores[i]);
+    EEPROM.get(i*(sizeof(highScores[0])+sizeof(initials[0]))+sizeof(highScores[0]),initials[i]);
+  }
 }
 
 
