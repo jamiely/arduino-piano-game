@@ -40,10 +40,21 @@ int twinkleDurations[] = {
 };
 
 int joy_to_the_world_melody[] = {
-  NOTE_D4, NOTE_D4, NOTE_E4, NOTE_FS4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4, NOTE_CS4, NOTE_B3, NOTE_A3, NOTE_B3, NOTE_CS4, NOTE_D4,
-  NOTE_D4, NOTE_D4, NOTE_E4, NOTE_FS4, NOTE_G4, NOTE_A4, NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4, NOTE_CS4, NOTE_B3, NOTE_A3, NOTE_B3, NOTE_A3, NOTE_G3,
-  NOTE_FS3, NOTE_FS3, NOTE_G3, NOTE_A3, NOTE_A3, NOTE_G3, NOTE_FS3, NOTE_E3, NOTE_D3, NOTE_E3, NOTE_D3, NOTE_C3, NOTE_B2, NOTE_C3, NOTE_B2, NOTE_A2,
-  NOTE_G2, NOTE_G2, NOTE_A2, NOTE_B2, NOTE_A2, NOTE_G2, NOTE_FS2, NOTE_E2, NOTE_D2, NOTE_C2, NOTE_B1, NOTE_A1, NOTE_G1, NOTE_FS1, NOTE_E1, NOTE_D1
+  NOTE_D5, NOTE_CS5, NOTE_B4, NOTE_A4,
+  NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4,
+  NOTE_A4, NOTE_B4, NOTE_B4, NOTE_CS5, 
+  NOTE_CS5, NOTE_D5,
+  NOTE_D5, NOTE_D5, NOTE_CS5, NOTE_B4, 
+  NOTE_A4, NOTE_A4, NOTE_G4, NOTE_FS4,
+  NOTE_D5, NOTE_D5, NOTE_CS5, NOTE_B4, 
+  NOTE_A4, NOTE_A4, NOTE_G4, NOTE_FS4,
+  NOTE_FS4, NOTE_FS4, NOTE_FS4, NOTE_FS4, 
+  NOTE_FS4, NOTE_A4,
+  NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_E4, 
+  NOTE_E4, NOTE_E4, NOTE_G4,
+  NOTE_FS4, NOTE_E4, NOTE_D4, NOTE_D5, 
+  NOTE_B4, NOTE_A4, NOTE_G4, NOTE_FS4, 
+  NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D4
 };
 
 // Corresponding note durations (in milliseconds)
@@ -52,7 +63,16 @@ int joy_to_the_world_melody[] = {
 //   250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 500, 250, 500
 // };
 
-int joy_to_the_world_melody_length = 64;
+int joy_to_the_world_melody_length = 55;
+
+int whenTheSaintsGoMatchingInMelody[] = {
+  NOTE_C4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_C4, NOTE_E4, NOTE_F4, NOTE_G4,
+  NOTE_C4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_E4, NOTE_D4,
+  NOTE_E4, NOTE_E4, NOTE_D4, NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G4, NOTE_F4,
+  NOTE_F4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_C4
+};
+
+int whenTheSaintsGoMatchingInMelodyLength = 32;
 
 int melodyCount = 3;
 
@@ -67,6 +87,10 @@ void ArcadePiano::switchSong() {
       melodyLength = twinkleLength;
       break;
     case 2:
+      melody = whenTheSaintsGoMatchingInMelody;
+      melodyLength = whenTheSaintsGoMatchingInMelodyLength;
+      break;
+    case 3:
       melody = joy_to_the_world_melody;
       melodyLength = joy_to_the_world_melody_length;
       break;
@@ -77,7 +101,7 @@ void ArcadePiano::switchSong() {
 ArcadePiano::ArcadePiano(uint8_t key1Pin,uint8_t key2Pin,uint8_t key3Pin,uint8_t key4Pin) 
 : mx(HARDWARE_TYPE, CS_PIN, MAX_DEVICES)
 {
-  melodyIndex = 2;
+  melodyIndex = 3;
   keyPins[0]=key1Pin;
   keyPins[1]=key2Pin;
   keyPins[2]=key3Pin;
@@ -262,7 +286,7 @@ void ArcadePiano::printKeys(byte * keyQueue,byte keyQueueStartIndex)
     int r = MATRIX_DISPLAY_ROWS - 1 - dr;
     int keyQueueCol = keyQueue[((keyQueueStartIndex + dr)) % KEY_QUEUE_SIZE];
 
-    for(int dc=0; dc < KEY_DISPLAY_LENGTH; dc++){      
+    for(int dc=0; dc < KEY_DISPLAY_LENGTH; dc++){
       // the keyQueue tells us which column the note should be in for a given row
       int c = keyQueueCol * (MATRIX_DISPLAY_COLS) + dc;
       mx.setPoint(r, c, true);
