@@ -260,9 +260,11 @@ void ArcadePiano::printKeys(byte * keyQueue,byte keyQueueStartIndex)
   // draw one complete row at a time
   for(int dr=0; dr < KEY_QUEUE_SIZE; dr++){
     int r = MATRIX_DISPLAY_ROWS - 1 - dr;
+    int keyQueueCol = keyQueue[((keyQueueStartIndex + dr)) % KEY_QUEUE_SIZE];
 
     for(int dc=0; dc < KEY_DISPLAY_LENGTH; dc++){      
-      int c = keyQueue[((keyQueueStartIndex + dr)) % KEY_QUEUE_SIZE] * (MATRIX_DISPLAY_COLS + 1) + dc;
+      // the keyQueue tells us which column the note should be in for a given row
+      int c = keyQueueCol * (MATRIX_DISPLAY_COLS) + dc;
       mx.setPoint(r, c, true);
     }
   }
