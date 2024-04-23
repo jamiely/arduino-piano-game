@@ -41,8 +41,8 @@ These libraries are available for download through the Arduino IDE Library Manag
 <img src="./piano-game-circuit.svg" width="400" style="background-color: white">
 
 ## Materials
-1. Brown Cherry MX Key Switches
-2. [MAX7219 Dot Matrix Module](https://www.aliexpress.us/item/2255800945325764.html)
+1. 4 Brown Cherry MX Key Switches
+2. 4 [MAX7219 Dot Matrix Module](https://www.aliexpress.us/item/2255800945325764.html)
 3. ~~[0.56" 4-Digit 7-Segment Display](https://www.adafruit.com/product/881)~~ did not use
 4. [Elegoo Uno R3](https://www.elegoo.com/products/elegoo-uno-r3-board)
 5. M2 screws and nuts
